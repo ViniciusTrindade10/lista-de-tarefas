@@ -7,15 +7,25 @@ const listaTarefas = document.getElementById("lista-tarefas");
 const tarefas = JSON.parse(localStorage.getItem("tarefas")) || [];
 
 // Cria uma tarefa na página.
-function criarTarefa(textoTarefa) {
+function criarTarefa(tarefa) {
     const novaTarefa = document.createElement("li");
-    novaTarefa.textContent = textoTarefa;
+    novaTarefa.textContent = tarefa.texto;
 
+    if (tarefa.concluida) {
+    novaTarefa.style.textDecoration = "line-through";
+}
     // Clicar na tarefa marca como concluída.
-    novaTarefa.addEventListener("click", function () {
-        novaTarefa.style.textDecoration = "line-through";
-    });
+  novaTarefa.addEventListener("click", function () {
+    tarefa.concluida = !tarefa.concluida;
 
+    if (tarefa.concluida) {
+        novaTarefa.style.textDecoration = "line-through";
+    } else {
+        novaTarefa.style.textDecoration = "none";
+    }
+
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+});
     // Cria o botão Excluir.
     const botaoExcluir = document.createElement("button");
     botaoExcluir.textContent = "Excluir";
@@ -23,7 +33,7 @@ function criarTarefa(textoTarefa) {
 
     // Exclui a tarefa da tela e do localStorage.
     botaoExcluir.addEventListener("click", function () {
-        const indice = tarefas.indexOf(textoTarefa);
+        const indice = tarefas.indexOf(tarefa);
 
         if (indice !== -1) {
             tarefas.splice(indice, 1);
@@ -52,13 +62,18 @@ botaoAdicionar.addEventListener("click", function () {
     }
 
     // Guarda a tarefa no array.
-    tarefas.push(textoTarefa);
+   const novaTarefaDados = {
+    texto: textoTarefa,
+    concluida: false
+};
+
+tarefas.push(novaTarefaDados);
 
     // Salva no navegador.
     localStorage.setItem("tarefas", JSON.stringify(tarefas));
 
     // Mostra na página.
-    criarTarefa(textoTarefa);
+   criarTarefa(novaTarefaDados);
 
     // Limpa o campo.
     campoTarefa.value = "";
